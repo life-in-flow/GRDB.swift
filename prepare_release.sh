@@ -101,13 +101,13 @@ update_readme() {
 
 	cat <<-EOF
 
-		Inline GRDB.swift current version: ${current_version}
+		life-in-flow GRDB.swift current version: ${current_version}
 		Upstream GRDB.swift version: ${current_upstream_version} -> ${upstream_version}
 		SQLCipher version: ${current_sqlcipher_version} -> ${sqlcipher_version}
 	EOF
 
 	while ! [[ "${new_version}" =~ [0-9]\.[0-9]\.[0-9] ]]; do
-		read -rp "Input Inline GRDB.swift desired version number (x.y.z): " new_version </dev/tty
+		read -rp "Input life-in-flow GRDB.swift desired version number (x.y.z): " new_version </dev/tty
 	done
 
 	envsubst <"${cwd}/assets/README.md.in" >README.md
@@ -381,7 +381,7 @@ update_swift_package() {
 make_release() {
 	echo "Making ${new_version} release ... 🚢"
 
-	local commit_message="Inline GRDB.swift ${new_version} (GRDB ${upstream_version}, SQLCipher ${sqlcipher_version})"
+	local commit_message="life-in-flow GRDB.swift ${new_version} (GRDB ${upstream_version}, SQLCipher ${sqlcipher_version})"
 
 	git add "${cwd}/README.md" "${cwd}/Package.swift" "${cwd}/assets/xcodeproj.patch"
 	git commit -m "$commit_message"
@@ -389,11 +389,11 @@ make_release() {
 	git push origin main
 	git push origin "$new_version"
 
-	gh release create "$new_version" --generate-notes "${xcframework_zip}" --repo inlinehq/GRDB.swift
+	gh release create "$new_version" --generate-notes "${xcframework_zip}" --repo life-in-flow/GRDB.swift
 
 	cat <<-EOF
 
-		🎉 Release is ready at https://github.com/inlinehq/GRDB.swift/releases/tag/${new_version}
+		🎉 Release is ready at https://github.com/life-in-flow/GRDB.swift/releases/tag/${new_version}
 	EOF
 }
 
