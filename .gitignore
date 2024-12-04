@@ -1,4 +1,4 @@
-## https://github.com/github/gitignore/blob/master/Global/macOS.gitignore
+## https://github.com/github/gitignore/blob/master/Global/OSX.gitignore
 
 .DS_Store
 .AppleDouble
@@ -115,3 +115,7 @@ Tests/SPM/Packages
 
 # Test products
 Tests/products
+
+upstream
+GRDB.xcframework
+GRDB.xcframework.zip
