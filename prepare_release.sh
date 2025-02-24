@@ -85,7 +85,7 @@ clone_sqlcipher() {
 }
 
 update_readme() {
-	current_version="$(git describe --tags --abbrev=0 --exclude=v* main)"
+	current_version="$(git describe --tags --abbrev=0 --exclude=v* main 2>/dev/null || echo "0.0.0")"
 	current_upstream_version="$(grep '\* GRDB' README.md | cut -d '*' -f 3)"
 	current_sqlcipher_version="$(grep '\* SQLCipher' README.md | cut -d '*' -f 3)"
 
@@ -399,6 +399,12 @@ make_release() {
 
 main() {
 	printf '%s\n' "Using directory at ${workdir}"
+
+	# Ensure we're in a git repository
+	if ! git rev-parse --git-dir > /dev/null 2>&1; then
+		git init
+		git checkout -b main
+	fi
 
 	read_command_line_arguments "$@"
 
