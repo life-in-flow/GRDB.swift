@@ -4,7 +4,7 @@
 
 This is a fork of [GRDB](https://github.com/groue/GRDB.swift) with added support for [SQLCipher Community Edition](https://www.zetetic.net/sqlcipher/open-source/), packaged into XCFramework so that it can be consumed as a Swift Package, for Flow.
 
-The default branch for this repository is `main` (as opposed to upstream's `master`) and it doesn't include GRDB (or SQLCipher) source code – only the Swift Package definition and release scripts/assets. XCFramework archives are attached directly in [GitHub Releases](https://github.com/life-in-flow/GRDB.swift/releases).
+The default branch for this repository is `main` (as opposed to upstream's `master`) and it doesn't include GRDB (or SQLCipher) source code – only the Swift Package definition and release scripts/assets. XCFramework archives are attached directly in [GitHub Releases](https://github.com/life-in-flow/GRDB.swift/releases).
 
 ## Version
 
@@ -63,6 +63,12 @@ to use the same version as GRDB. Examples:
 In case `prepare_release.sh` script fails, you need to compile SQLCipher amalgamation package
 manually. See [general instructions](https://github.com/sqlcipher/sqlcipher#compiling-for-unix-like-systems):
 
+For SQLCipher 4.7.0 and later:
+- Use `./configure --with-crypto-impl=none --with-tempstore=yes CFLAGS="-DSQLCIPHER_CRYPTO_CC -DSQLITE_EXTRA_INIT=sqlcipher_extra_init -DSQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown"`.
+- Remember to use `make sqlite3.c` and not `make`.
+- Copy `sqlite3.c` and `sqlite3.h` to the appropriate location in your project.
+
+For SQLCipher before 4.7.0:
 - Use `./configure --with-crypto-lib=none`.
 - Remember to use `make sqlite3.c` and not `make`.
-- Copy `sqlite3.c` and `sqlite3.h` to `Sources/SQLCipher/sqlite3.c` and `Sources/SQLCipher/include/sqlite3.h`.
+- Copy `sqlite3.c` and `sqlite3.h` to the appropriate location in your project.

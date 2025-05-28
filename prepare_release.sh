@@ -127,7 +127,7 @@ build_sqlcipher() {
 	}
 
 	printf '%s' "Configuring SQLCipher ... "
-	eval ./configure --with-crypto-lib=none "$mute"
+	eval ./configure CFLAGS="-DSQLCIPHER_CRYPTO_CC"
 	echo "✅"
 
 	printf '%s' "Building SQLCipher ... "
