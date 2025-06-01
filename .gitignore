@@ -115,3 +115,13 @@ Tests/SPM/Packages
 
 # Test products
 Tests/products
+
+# Binary target build artifacts
+build_temp/
+GRDB.xcframework/
+GRDB.xcframework.zip
+Package_binary.swift
+
+# SQLCipher integration files (if you want to keep them out of git)
+GRDB/sqlite3.h.backup
+GRDB/sqlite3.c.backup
