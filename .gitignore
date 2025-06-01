@@ -119,7 +119,7 @@ Tests/products
 # Binary target build artifacts
 build_temp/
 GRDB.xcframework/
-GRDB.xcframework.zip
+# GRDB.xcframework.zip - Commented out to allow tracking the binary distribution
 Package_binary.swift
 
 # SQLCipher integration files (if you want to keep them out of git)

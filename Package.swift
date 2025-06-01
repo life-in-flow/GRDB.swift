@@ -38,21 +38,25 @@ let package = Package(
     ],
     products: [
         .library(name: "GRDBSQLite", targets: ["GRDBSQLite"]),
-        .library(name: "GRDB", targets: ["GRDB"]),
-        .library(name: "GRDB-dynamic", type: .dynamic, targets: ["GRDB"]),
+        .library(name: "GRDB", targets: ["GRDB", "_GRDBDummy"]),
+        .library(name: "GRDB-dynamic", type: .dynamic, targets: ["GRDB", "_GRDBDummy"]),
     ],
     dependencies: dependencies,
     targets: [
         .systemLibrary(
             name: "GRDBSQLite",
             providers: [.apt(["libsqlite3-dev"])]),
-        .target(
+        
+        // GRDB is now a binary target with SQLCipher included
+        .binaryTarget(
             name: "GRDB",
-            dependencies: ["GRDBSQLite"],
-            path: "GRDB",
-            resources: [.copy("PrivacyInfo.xcprivacy")],
-            cSettings: cSettings,
-            swiftSettings: swiftSettings),
+            url: "https://github.com/life-in-flow/GRDB.swift/releases/download/v7.0.0-sqlcipher/GRDB.xcframework.zip",
+            checksum: "230ccea445edd7c1b88bae84f2cc9151935a8cfd7daf63d2e0dd87817040dcf0"
+        ),
+        
+        // Dummy target required for binary targets
+        .target(name: "_GRDBDummy"),
+        
         .testTarget(
             name: "GRDBTests",
             dependencies: ["GRDB"],
