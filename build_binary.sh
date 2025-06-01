@@ -52,18 +52,16 @@ xcodebuild -create-xcframework \
     -output GRDB.xcframework \
     >/dev/null 2>&1
 
-# 5. Compress
-ditto -c -k --keepParent GRDB.xcframework GRDB.xcframework.zip
+# 5. Zip
+echo "Creating XCFramework zip..."
+zip -r GRDB.xcframework.zip GRDB.xcframework
 
-# 6. Checksum
-CHECKSUM=$(swift package compute-checksum GRDB.xcframework.zip)
-
-echo "Done!"
-echo "XCFramework: GRDB.xcframework"
-echo "Checksum: ${CHECKSUM}"
+echo "✅ Binary build complete!"
 echo ""
-echo "To use as binary target, update your Package.swift with:"
-echo "  path: \"./GRDB.xcframework\""
-echo "  or"
-echo "  url: \"https://your-release-url/GRDB.xcframework.zip\","
-echo "  checksum: \"${CHECKSUM}\"" 
+echo "Created: GRDB.xcframework.zip"
+echo ""
+echo "To use the binary target in Package.swift:"
+echo ".binaryTarget("
+echo "  name: \"GRDB\","
+echo "  path: \"GRDB.xcframework.zip\""
+echo ")" 

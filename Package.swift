@@ -39,7 +39,6 @@ let package = Package(
     products: [
         .library(name: "GRDBSQLite", targets: ["GRDBSQLite"]),
         .library(name: "GRDB", targets: ["GRDB", "_GRDBDummy"]),
-        .library(name: "GRDB-dynamic", type: .dynamic, targets: ["GRDB", "_GRDBDummy"]),
     ],
     dependencies: dependencies,
     targets: [
@@ -50,8 +49,7 @@ let package = Package(
         // GRDB is now a binary target with SQLCipher included
         .binaryTarget(
             name: "GRDB",
-            url: "https://github.com/life-in-flow/GRDB.swift/releases/download/v7.0.0-sqlcipher/GRDB.xcframework.zip",
-            checksum: "230ccea445edd7c1b88bae84f2cc9151935a8cfd7daf63d2e0dd87817040dcf0"
+            path: "GRDB.xcframework.zip"
         ),
         
         // Dummy target required for binary targets

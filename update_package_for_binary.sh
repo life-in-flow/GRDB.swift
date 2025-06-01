@@ -4,19 +4,16 @@ set -e
 
 echo "Converting GRDB to use binary target..."
 
-# 1. First build the binary if it doesn't exist
-if [[ ! -f "GRDB.xcframework.zip" ]]; then
-    echo "Building XCFramework first..."
+# 1. Build binary if needed
+if [ ! -f "GRDB.xcframework.zip" ]; then
+    echo "Building binary target..."
     ./build_binary.sh
 fi
 
-# 2. Get the checksum
-CHECKSUM=$(swift package compute-checksum GRDB.xcframework.zip)
-
-# 3. Backup original Package.swift
+# 2. Backup Package.swift
 cp Package.swift Package.swift.backup
 
-# 4. Create the new Package.swift that replaces source GRDB with binary
+# 3. Create the new Package.swift content
 cat > Package.swift << 'EOF'
 // swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
@@ -70,8 +67,7 @@ let package = Package(
         // GRDB is now a binary target with SQLCipher included
         .binaryTarget(
             name: "GRDB",
-            url: "https://github.com/life-in-flow/GRDB.swift/releases/download/PLACEHOLDER_VERSION/GRDB.xcframework.zip",
-            checksum: "PLACEHOLDER_CHECKSUM"
+            path: "GRDB.xcframework.zip"
         ),
         
         // Dummy target required for binary targets
@@ -111,15 +107,14 @@ let package = Package(
 )
 EOF
 
-# 5. Update with actual checksum
-sed -i '' "s/PLACEHOLDER_CHECKSUM/${CHECKSUM}/" Package.swift
-
-# 6. Create dummy target if it doesn't exist
+# 4. Create dummy target if it doesn't exist
 mkdir -p Sources/_GRDBDummy
 echo "" > Sources/_GRDBDummy/_GRDBDummy.swift
 
+echo "✅ Package.swift updated for binary target!"
 echo ""
-echo "✅ Package.swift updated to use binary target!"
+echo "The GRDB target now uses the local GRDB.xcframework.zip file."
+echo "Original Package.swift backed up as Package.swift.backup"
 echo ""
 echo "Next steps:"
 echo "1. Update PLACEHOLDER_VERSION in Package.swift with your release version"
