@@ -54,7 +54,7 @@ xcodebuild -create-xcframework \
 
 # 5. Zip
 echo "Creating XCFramework zip..."
-zip -r GRDB.xcframework.zip GRDB.xcframework
+zip -r --symlinks GRDB.xcframework.zip GRDB.xcframework
 
 echo "✅ Binary build complete!"
 echo ""
