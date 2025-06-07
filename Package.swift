@@ -43,8 +43,7 @@ let package = Package(
     dependencies: dependencies,
     targets: [
         .systemLibrary(
-            name: "GRDBSQLite",
-            providers: [.apt(["libsqlite3-dev"])]),
+            name: "GRDBSQLite"),
         
         // GRDB is now a binary target with SQLCipher included
         .binaryTarget(
