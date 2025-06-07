@@ -12,7 +12,9 @@ project.
 
    The script downloads SQLCipher, compiles the amalgamation, patches the Xcode
    project, and creates `SQLCipher/GRDB_SQLCipher.xcframework.zip`.
-   It also prints the Swift Package Manager checksum for the archive.
+   It temporarily comments out `import SQLCipher` statements and builds GRDB with
+   SQLCipher flags. The script prints the Swift Package Manager checksum for the
+   archive.
 
 2. In your own package manifest, declare a binary target that points at the zip
    archive and use it instead of the regular `GRDB` target. Use the checksum

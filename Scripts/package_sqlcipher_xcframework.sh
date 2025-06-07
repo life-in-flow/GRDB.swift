@@ -11,6 +11,11 @@ PATCH_FILE="$GRDB_DIR/Scripts/sqlcipher_xcodeproj.patch"
 XCFRAMEWORK_DIR="$GRDB_DIR/SQLCipher"
 XCFRAMEWORK="$XCFRAMEWORK_DIR/GRDB_SQLCipher.xcframework"
 ZIPFILE="$XCFRAMEWORK_DIR/GRDB_SQLCipher.xcframework.zip"
+SQLCIPHER_SWIFT_FLAGS="-D SWIFT_PACKAGE -D SQLITE_HAS_CODEC -D GRDBCIPHER -D SQLITE_ENABLE_FTS5"
+SQLCIPHER_DEFINES="SQLITE_HAS_CODEC=1 GRDBCIPHER=1 SQLITE_ENABLE_FTS5=1"
+SQLCIPHER_CFLAGS="-DSQLITE_HAS_CODEC -DGRDBCIPHER -DSQLITE_ENABLE_FTS5"
+
+IMPORT_FILES=""
 
 mkdir -p "$XCFRAMEWORK_DIR"
 
@@ -35,6 +40,13 @@ patch_project() {
     patch -N -s -p1 -d "$GRDB_DIR" < "$PATCH_FILE" || true
 }
 
+comment_imports() {
+    IMPORT_FILES=$(grep -rl "import SQLCipher" "$GRDB_DIR/GRDB" || true)
+    for f in $IMPORT_FILES; do
+        sed -i.bak 's/^import SQLCipher/\/\/ import SQLCipher/' "$f"
+    done
+}
+
 archive_build() {
     local platform="$1"
     local archivePath="$2"
@@ -44,7 +56,10 @@ archive_build() {
         -destination "generic/platform=$platform" \
         -archivePath "$archivePath" \
         -derivedDataPath "$WORKDIR/DerivedData" \
-        BUILD_LIBRARY_FOR_DISTRIBUTION=YES SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO >/dev/null
+        BUILD_LIBRARY_FOR_DISTRIBUTION=YES SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO \
+        OTHER_SWIFT_FLAGS="$SQLCIPHER_SWIFT_FLAGS" \
+        OTHER_CFLAGS="$SQLCIPHER_CFLAGS" \
+        GCC_PREPROCESSOR_DEFINITIONS="$SQLCIPHER_DEFINES" >/dev/null
 }
 
 build_xcframework() {
@@ -68,6 +83,8 @@ compute_checksum() {
 
 cleanup() {
     patch -R -s -p1 -d "$GRDB_DIR" < "$PATCH_FILE" || true
+    git -C "$GRDB_DIR" checkout -- ${IMPORT_FILES:-}
+    rm -f "$GRDB_DIR"/GRDB/*.bak >/dev/null 2>&1 || true
     rm -f "$GRDB_DIR/GRDB/sqlite3.c" "$GRDB_DIR/GRDB/sqlite3.h"
 }
 
@@ -76,6 +93,7 @@ trap cleanup EXIT
 clone_sqlcipher
 build_sqlcipher
 patch_project
+comment_imports
 build_xcframework
 checksum=$(compute_checksum)
 
