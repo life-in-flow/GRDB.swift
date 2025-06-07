@@ -84,7 +84,7 @@ compute_checksum() {
 cleanup() {
     patch -R -s -p1 -d "$GRDB_DIR" < "$PATCH_FILE" || true
     git -C "$GRDB_DIR" checkout -- ${IMPORT_FILES:-}
-    rm -f "$GRDB_DIR"/GRDB/*.bak >/dev/null 2>&1 || true
+    find "$GRDB_DIR/GRDB" -name '*.bak' -delete 2>/dev/null || true
     rm -f "$GRDB_DIR/GRDB/sqlite3.c" "$GRDB_DIR/GRDB/sqlite3.h"
 }
 
