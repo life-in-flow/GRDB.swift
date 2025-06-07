@@ -74,7 +74,6 @@ let package = Package(
             swiftSettings: swiftSettings + [
                 .define("SQLITE_HAS_CODEC"),
                 .define("GRDBCIPHER"),
-                .define("GRDB_USE_SQLCIPHER"),
             ]
         ),
         

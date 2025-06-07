@@ -1,11 +1,10 @@
 #if SQLITE_ENABLE_FTS5
 // Import C SQLite functions
-#if GRDB_USE_SQLCIPHER
-import SQLCipher
-#elseif SWIFT_PACKAGE
+#if SWIFT_PACKAGE
+
 import GRDBSQLite
 #elseif GRDBCIPHER
-import SQLCipher
+//import SQLCipher
 #elseif !GRDBCUSTOMSQLITE && !GRDBCIPHER
 import SQLite3
 #endif
