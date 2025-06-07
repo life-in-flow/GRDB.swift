@@ -25,15 +25,14 @@ build_sqlcipher() {
     ./configure >/dev/null
     make -j"$(sysctl -n hw.ncpu 2>/dev/null || echo 1)" sqlite3.c >/dev/null
     popd >/dev/null
-    mkdir -p "$GRDB_DIR/SQLCipher"
-    echo "#include <sys/param.h>" > "$GRDB_DIR/SQLCipher/sqlite3.c"
-    cat "$SQLCIPHER_DIR/sqlite3.c" >> "$GRDB_DIR/SQLCipher/sqlite3.c"
-    cp "$SQLCIPHER_DIR/sqlite3.h" "$GRDB_DIR/SQLCipher/sqlite3.h"
+    echo "#include <sys/param.h>" > "$GRDB_DIR/GRDB/sqlite3.c"
+    cat "$SQLCIPHER_DIR/sqlite3.c" >> "$GRDB_DIR/GRDB/sqlite3.c"
+    cp "$SQLCIPHER_DIR/sqlite3.h" "$GRDB_DIR/GRDB/sqlite3.h"
 }
 
 patch_project() {
     echo "Patching Xcode project..."
-    patch -s -p1 -d "$GRDB_DIR" < "$PATCH_FILE"
+    patch -N -s -p1 -d "$GRDB_DIR" < "$PATCH_FILE" || true
 }
 
 archive_build() {
@@ -66,6 +65,13 @@ build_xcframework() {
 compute_checksum() {
     swift package compute-checksum "$ZIPFILE"
 }
+
+cleanup() {
+    patch -R -s -p1 -d "$GRDB_DIR" < "$PATCH_FILE" || true
+    rm -f "$GRDB_DIR/GRDB/sqlite3.c" "$GRDB_DIR/GRDB/sqlite3.h"
+}
+
+trap cleanup EXIT
 
 clone_sqlcipher
 build_sqlcipher
