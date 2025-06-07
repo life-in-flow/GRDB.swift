@@ -27,6 +27,9 @@ if ProcessInfo.processInfo.environment["SPI_BUILDER"] == "1" {
     dependencies.append(.package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"))
 }
 
+// Add SQLCipher package dependency
+dependencies.append(.package(url: "https://github.com/skiptools/swift-sqlcipher.git", from: "1.5.0"))
+
 let package = Package(
     name: "GRDB",
     defaultLocalization: "en", // for tests
@@ -38,21 +41,42 @@ let package = Package(
     ],
     products: [
         .library(name: "GRDBSQLite", targets: ["GRDBSQLite"]),
-        .library(name: "GRDB", targets: ["GRDB", "_GRDBDummy"]),
+        .library(name: "GRDB", targets: ["GRDB"]),
     ],
     dependencies: dependencies,
     targets: [
-        .systemLibrary(
-            name: "GRDBSQLite"),
-        
-        // GRDB is now a binary target with SQLCipher included
-        .binaryTarget(
-            name: "GRDB",
-            path: "GRDB.xcframework.zip"
+        // GRDBSQLite now uses SQLCipher package
+        .target(
+            name: "GRDBSQLite",
+            dependencies: [
+                .product(name: "SQLCipher", package: "swift-sqlcipher")
+            ],
+            publicHeadersPath: "."
         ),
         
-        // Dummy target required for binary targets
-        .target(name: "_GRDBDummy"),
+        // GRDB now builds from source with SQLCipher support
+        .target(
+            name: "GRDB",
+            dependencies: [
+                "GRDBSQLite",
+                .product(name: "SQLCipher", package: "swift-sqlcipher")
+            ],
+            path: "GRDB",
+            exclude: [
+                "sqlite3.c",
+                "sqlite3.h",
+            ],
+            cSettings: cSettings + [
+                .define("SQLITE_HAS_CODEC"),
+                .define("GRDBCIPHER"),
+                .define("SQLITE_ENABLE_FTS5"),
+            ],
+            swiftSettings: swiftSettings + [
+                .define("SQLITE_HAS_CODEC"),
+                .define("GRDBCIPHER"),
+                .define("GRDB_USE_SQLCIPHER"),
+            ]
+        ),
         
         .testTarget(
             name: "GRDBTests",

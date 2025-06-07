@@ -1,4 +1,4 @@
-#include "../../GRDB/sqlite3.h"
+#include <sqlite3.h>
 
 typedef void (*_errorLogCallback)(void *pArg, int iErrCode, const char *zMsg);
 

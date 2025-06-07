@@ -1,5 +1,7 @@
 // Import C SQLite functions
-#if SWIFT_PACKAGE
+#if GRDB_USE_SQLCIPHER
+import SQLCipher
+#elseif SWIFT_PACKAGE
 import GRDBSQLite
 #elseif GRDBCIPHER
 import SQLCipher

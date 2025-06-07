@@ -6,8 +6,6 @@ set -e
 
 echo "Building GRDB XCFramework with SQLCipher..."
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 # 1. Build SQLCipher if needed
 if [[ ! -f "GRDB/sqlite3.c" ]]; then
     echo "Building SQLCipher..."
@@ -24,9 +22,9 @@ if [[ ! -f "GRDB/sqlite3.c" ]]; then
     cat /tmp/sqlcipher/sqlite3.c >> GRDB/sqlite3.c
 fi
 
-# 2. Comment out imports
-find GRDB -name "*.swift" -type f -exec sed -i '' 's/import SQLCipher/\/\/import SQLCipher/g' {} +
-find GRDB -name "*.swift" -type f -exec sed -i '' 's/import SQLite3/\/\/import SQLite3/g' {} +
+# # 2. Comment out imports
+# find GRDB -name "*.swift" -type f -exec sed -i '' 's/import SQLCipher/\/\/import SQLCipher/g' {} +
+# find GRDB -name "*.swift" -type f -exec sed -i '' 's/import SQLite3/\/\/import SQLite3/g' {} +
 
 # 3. Clear Export.swift
 echo "" > GRDB/Export.swift
@@ -62,8 +60,3 @@ echo "✅ Binary build complete!"
 echo ""
 echo "Created: GRDB.xcframework.zip"
 echo ""
-echo "To use the binary target in Package.swift:"
-echo ".binaryTarget("
-echo "  name: \"GRDB\","
-echo "  path: \"GRDB.xcframework.zip\""
-echo ")" 
