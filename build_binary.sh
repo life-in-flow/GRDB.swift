@@ -6,6 +6,8 @@ set -e
 
 echo "Building GRDB XCFramework with SQLCipher..."
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # 1. Build SQLCipher if needed
 if [[ ! -f "GRDB/sqlite3.c" ]]; then
     echo "Building SQLCipher..."
@@ -42,7 +44,7 @@ for PLATFORM in "macOS" "iOS" "iOS Simulator"; do
         BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
         SKIP_INSTALL=NO \
         ONLY_ACTIVE_ARCH=NO \
-        >/dev/null 2>&1
+        -xcconfig "build_assets/SQLCipher.xcconfig"
 done
 
 xcodebuild -create-xcframework \
