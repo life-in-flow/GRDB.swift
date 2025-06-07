@@ -22,10 +22,12 @@ clone_sqlcipher() {
 build_sqlcipher() {
     echo "Building SQLCipher amalgamation..."
     pushd "$SQLCIPHER_DIR" >/dev/null
-    ./configure --with-crypto-lib=none >/dev/null
+    ./configure >/dev/null
     make -j"$(sysctl -n hw.ncpu 2>/dev/null || echo 1)" sqlite3.c >/dev/null
     popd >/dev/null
-    cp "$SQLCIPHER_DIR/sqlite3.c" "$GRDB_DIR/SQLCipher/sqlite3.c"
+    mkdir -p "$GRDB_DIR/SQLCipher"
+    echo "#include <sys/param.h>" > "$GRDB_DIR/SQLCipher/sqlite3.c"
+    cat "$SQLCIPHER_DIR/sqlite3.c" >> "$GRDB_DIR/SQLCipher/sqlite3.c"
     cp "$SQLCIPHER_DIR/sqlite3.h" "$GRDB_DIR/SQLCipher/sqlite3.h"
 }
 
