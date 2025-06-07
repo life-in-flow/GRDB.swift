@@ -339,6 +339,8 @@ See [Encryption](#encryption) for the installation procedure of GRDB with SQLCip
 
 See [Custom SQLite builds](Documentation/CustomSQLiteBuilds.md) for the installation procedure of GRDB with a customized build of SQLite.
 
+See [Using SQLCipher with Swift Package Manager](Documentation/SQLCipherSPM.md) for instructions on integrating GRDB built with SQLCipher as a binary target.
+
 
 ## Swift Package Manager
 
