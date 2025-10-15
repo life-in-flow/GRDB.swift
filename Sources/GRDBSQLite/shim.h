@@ -1,10 +1,4 @@
-#if __has_include(<GRDB/sqlite3.h>)
-// When using binary GRDB with embedded SQLCipher
-#include <GRDB/sqlite3.h>
-#else
-// When using system SQLite
 #include <sqlite3.h>
-#endif
 
 // Expose APIs that are missing from system <sqlite3.h>
 #ifdef GRDB_SQLITE_ENABLE_PREUPDATE_HOOK

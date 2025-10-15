@@ -60,16 +60,18 @@ let package = Package(
     ],
     dependencies: dependencies,
     targets: [
-        .systemLibrary(
+        // GRDBSQLite shim that re-exports SQLite from the binary framework
+        .target(
             name: "GRDBSQLite",
-            providers: [.apt(["libsqlite3-dev"])]),
-        
+            dependencies: ["GRDB"],
+            path: "Sources/GRDBSQLite"),
+
         // GRDB is now a binary target with SQLCipher included
         .binaryTarget(
             name: "GRDB",
             path: "GRDB.xcframework.zip"
         ),
-        
+
         // Dummy target required for binary targets
         .target(name: "_GRDBDummy"),
         
