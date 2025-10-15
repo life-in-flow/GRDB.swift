@@ -27,9 +27,6 @@ if ProcessInfo.processInfo.environment["SPI_BUILDER"] == "1" {
     dependencies.append(.package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"))
 }
 
-// Add SQLCipher package dependency
-dependencies.append(.package(url: "https://github.com/skiptools/swift-sqlcipher.git", from: "1.5.0"))
-
 let package = Package(
     name: "GRDB",
     defaultLocalization: "en", // for tests
@@ -41,41 +38,23 @@ let package = Package(
     ],
     products: [
         .library(name: "GRDBSQLite", targets: ["GRDBSQLite"]),
-        .library(name: "GRDB", targets: ["GRDB"]),
+        .library(name: "GRDB", targets: ["GRDB", "_GRDBDummy"]),
+        .library(name: "GRDB-dynamic", type: .dynamic, targets: ["GRDB", "_GRDBDummy"]),
     ],
     dependencies: dependencies,
     targets: [
-        // GRDBSQLite now uses SQLCipher package
-        .target(
+        .systemLibrary(
             name: "GRDBSQLite",
-            dependencies: [
-                .product(name: "SQLCipher", package: "swift-sqlcipher")
-            ],
-            publicHeadersPath: "."
+            providers: [.apt(["libsqlite3-dev"])]),
+        
+        // GRDB is now a binary target with SQLCipher included
+        .binaryTarget(
+            name: "GRDB",
+            path: "GRDB.xcframework.zip"
         ),
         
-        // GRDB now builds from source with SQLCipher support
-        .target(
-            name: "GRDB",
-            dependencies: [
-                "GRDBSQLite",
-                .product(name: "SQLCipher", package: "swift-sqlcipher")
-            ],
-            path: "GRDB",
-            exclude: [
-                "sqlite3.c",
-                "sqlite3.h",
-            ],
-            cSettings: cSettings + [
-                .define("SQLITE_HAS_CODEC"),
-                .define("GRDBCIPHER"),
-                .define("SQLITE_ENABLE_FTS5"),
-            ],
-            swiftSettings: swiftSettings + [
-                .define("SQLITE_HAS_CODEC"),
-                .define("GRDBCIPHER"),
-            ]
-        ),
+        // Dummy target required for binary targets
+        .target(name: "_GRDBDummy"),
         
         .testTarget(
             name: "GRDBTests",

@@ -27,6 +27,9 @@ if ProcessInfo.processInfo.environment["SPI_BUILDER"] == "1" {
     dependencies.append(.package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"))
 }
 
+// Add SQLCipher package dependency
+dependencies.append(.package(url: "https://github.com/skiptools/swift-sqlcipher.git", from: "1.5.0"))
+
 let package = Package(
     name: "GRDB",
     defaultLocalization: "en", // for tests
@@ -39,20 +42,41 @@ let package = Package(
     products: [
         .library(name: "GRDBSQLite", targets: ["GRDBSQLite"]),
         .library(name: "GRDB", targets: ["GRDB"]),
-        .library(name: "GRDB-dynamic", type: .dynamic, targets: ["GRDB"]),
     ],
     dependencies: dependencies,
     targets: [
-        .systemLibrary(
+        // GRDBSQLite now uses SQLCipher package
+        .target(
             name: "GRDBSQLite",
-            providers: [.apt(["libsqlite3-dev"])]),
+            dependencies: [
+                .product(name: "SQLCipher", package: "swift-sqlcipher")
+            ],
+            publicHeadersPath: "."
+        ),
+        
+        // GRDB now builds from source with SQLCipher support
         .target(
             name: "GRDB",
-            dependencies: ["GRDBSQLite"],
+            dependencies: [
+                "GRDBSQLite",
+                .product(name: "SQLCipher", package: "swift-sqlcipher")
+            ],
             path: "GRDB",
-            resources: [.copy("PrivacyInfo.xcprivacy")],
-            cSettings: cSettings,
-            swiftSettings: swiftSettings),
+            exclude: [
+                "sqlite3.c",
+                "sqlite3.h",
+            ],
+            cSettings: cSettings + [
+                .define("SQLITE_HAS_CODEC"),
+                .define("GRDBCIPHER"),
+                .define("SQLITE_ENABLE_FTS5"),
+            ],
+            swiftSettings: swiftSettings + [
+                .define("SQLITE_HAS_CODEC"),
+                .define("GRDBCIPHER"),
+            ]
+        ),
+        
         .testTarget(
             name: "GRDBTests",
             dependencies: ["GRDB"],
