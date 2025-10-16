@@ -15,7 +15,17 @@
     <a href="https://github.com/groue/GRDB.swift/actions/workflows/CI.yml"><img alt="CI Status" src="https://github.com/groue/GRDB.swift/actions/workflows/CI.yml/badge.svg?branch=master"></a>
 </p>
 
-**Latest release**: July 23, 2025 • [version 7.6.1](https://github.com/groue/GRDB.swift/tree/v7.6.1) • [CHANGELOG](CHANGELOG.md) • [Migrating From GRDB 6 to GRDB 7](Documentation/GRDB7MigrationGuide.md)
+---
+
+<a href="https://menial.co.uk/base/"><img alt="Base: The best SQLite database editor for macOS" src="https://raw.githubusercontent.com/groue/GRDB.swift/master/Sponsors/base.png"></a>
+
+<p align="center">
+    <strong>Thank you to <a href="https://menial.co.uk/base/">Base</a> for sponsoring GRDB</strong><br />Base is a small, powerful, comfortable SQLite editor for everyone on macOS.
+</p>
+
+---
+
+**Latest release**: September 23, 2025 • [version 7.7.0](https://github.com/groue/GRDB.swift/tree/v7.7.0) • [CHANGELOG](CHANGELOG.md) • [Migrating From GRDB 6 to GRDB 7](Documentation/GRDB7MigrationGuide.md)
 
 **Requirements**: iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 7.0+ &bull; SQLite 3.20.0+ &bull; Swift 6+ / Xcode 16+
 
@@ -325,7 +335,7 @@ Documentation
 - [Unicode](#unicode)
 - [Memory Management](#memory-management)
 - [Data Protection](https://swiftpackageindex.com/groue/GRDB.swift/documentation/grdb/databaseconnections)
-- :bulb: [Migrating From GRDB 6 to GRDB 7](Documentation/Documentation/GRDB7MigrationGuide.md)
+- :bulb: [Migrating From GRDB 6 to GRDB 7](Documentation/GRDB7MigrationGuide.md)
 - :bulb: [Why Adopt GRDB?](Documentation/WhyAdoptGRDB.md)
 - :bulb: [Recommended Practices for Designing Record Types](https://swiftpackageindex.com/groue/GRDB.swift/documentation/grdb/recordrecommendedpractices)
 
@@ -2184,7 +2194,7 @@ For more information about batch updates, see [Update Requests](#update-requests
 
 > **Note**: Upsert apis are available from SQLite 3.35.0+: iOS 15.0+, macOS 12.0+, tvOS 15.0+, watchOS 8.0+, or with a [custom SQLite build] or [SQLCipher](#encryption).
 >
-> **Note**: With regard to [persistence callbacks](#available-callbacks), an upsert behaves exactly like an insert. In particular: the `aroundInsert(_:)` and `didInsert(_:)` callbacks reports the rowid of the inserted or updated row; `willUpdate`, `aroundUdate`, `didUdate` are not called.
+> **Note**: With regard to [persistence callbacks](#available-callbacks), an upsert behaves exactly like an insert. In particular: the `aroundInsert(_:)` and `didInsert(_:)` callbacks reports the rowid of the inserted or updated row; `willUpdate`, `aroundUpdate`, `didUpdate` are not called.
 
 [PersistableRecord] provides three upsert methods:
 
@@ -2998,7 +3008,7 @@ try player.insert(db)
 > // INSERT OR IGNORE INTO player ... RETURNING *
 > do {
 >     let insertedPlayer = try player.insertAndFetch(db) {
->     // Succesful insertion
+>     // Successful insertion
 > catch RecordError.recordNotFound {
 >     // Failed insertion due to IGNORE policy
 > }
